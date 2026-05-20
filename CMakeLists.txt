@@ -87,6 +87,7 @@ target_sources(RoboVox
 target_include_directories(RoboVox
     PRIVATE
         Source
+        "C:/Users/ionsa/Documents/GitHub/espeak-ng/src/include"
         ${ESPEAK_INCLUDE_DIRS}
 )
 
