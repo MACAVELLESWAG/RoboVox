@@ -110,3 +110,9 @@ void RoboVoxAudioProcessor::setStateInformation (const void* data, int sizeInByt
     if (xml.get() != nullptr && xml->hasTagName (apvts.state.getType()))
         apvts.replaceState (juce::ValueTree::fromXml (*xml));
 }
+
+// This is required by JUCE for plugin creation
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
+{
+    return new RoboVoxAudioProcessor();
+}
