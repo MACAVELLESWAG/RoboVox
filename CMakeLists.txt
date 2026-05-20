@@ -107,7 +107,7 @@ target_link_libraries(RoboVox
         juce::juce_gui_extra
         juce::juce_dsp
         ${ESPEAK_LIBRARIES}
-        "C:/Users/ionsa/Documents/GitHub/espeak-ng/build/src/Release/espeak-ng.lib"
+        "C:/Users/ionsa/Documents/GitHub/espeak-ng/build/src/libespeak-ng/Release/espeak-ng.lib"
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
