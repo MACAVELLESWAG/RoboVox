@@ -108,15 +108,14 @@ void TTSynthesizer::processBlock (juce::AudioBuffer<float>& buffer)
     // Check for newly synthesized buffer (atomic swap)
     if (newBufferReady.exchange (false))
     {
-        // Swap in the new audio (worker already filled tempResampledBuffer)
         const int newLen = juce::jmin (tempResampledBuffer.getNumSamples(), maxPlaybackSamples);
         playbackBuffer.copyFrom (0, 0, tempResampledBuffer, 0, 0, newLen);
-        playbackLength = newLen;
-        playbackReadPos = 0;
+        playbackLength.store(newLen);
+        playbackReadPos.store(0);
     }
 
-    int& readPos = playbackReadPos;
-    const int len   = playbackLength;
+    int readPos = playbackReadPos.load();
+    int len     = playbackLength.load();
 
     for (int i = 0; i < numSamples; ++i)
     {
@@ -129,22 +128,24 @@ void TTSynthesizer::processBlock (juce::AudioBuffer<float>& buffer)
         }
         else
         {
-            // Finished speaking this phrase
             if (readPos == len && len > 0)
             {
-                // Auto clear so we don't loop
-                playbackLength = 0;
+                playbackLength.store(0);
+                len = 0; // prevent further playback this block
             }
         }
 
         outL[i] = sample;
         if (outR) outR[i] = sample;
     }
+
+    // Write back the updated read position
+    playbackReadPos.store(readPos);
 }
 
 bool TTSynthesizer::isCurrentlySpeaking() const noexcept
 {
-    return playbackReadPos < playbackLength;
+    return playbackReadPos.load() < playbackLength.load();
 }
 
 int TTSynthesizer::getCurrentMidiNote() const noexcept

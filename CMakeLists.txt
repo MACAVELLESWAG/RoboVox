@@ -75,6 +75,8 @@ juce_add_plugin(RoboVox
     COPY_PLUGIN_AFTER_BUILD     TRUE
 )
 
+juce_generate_juce_header(RoboVox)
+
 target_sources(RoboVox
     PRIVATE
         Source/PluginProcessor.cpp
@@ -99,6 +101,9 @@ target_compile_definitions(RoboVox
 target_link_libraries(RoboVox
     PRIVATE
         juce::juce_audio_utils
+        juce::juce_audio_processors
+        juce::juce_gui_basics
+        juce::juce_gui_extra
         juce::juce_dsp
         ${ESPEAK_LIBRARIES}
     PUBLIC
