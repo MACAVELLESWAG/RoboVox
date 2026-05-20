@@ -5,16 +5,7 @@ RoboVoxAudioProcessor::RoboVoxAudioProcessor()
     : AudioProcessor (BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
       apvts (*this, nullptr, "PARAMETERS", createParameterLayout())
 {
-    speedParam   = apvts.getRawParameterValue ("speed");
-    pitchParam   = apvts.getRawParameterValue ("pitch");
-    gainParam    = apvts.getRawParameterValue ("gain");
-    roboticParam = apvts.getRawParameterValue ("robotic");
-
-    // Initial sync to TTS
-    tts.setSpeed (speedParam ? *speedParam : 175.0f);
-    tts.setPitchOffsetSemitones (pitchParam ? *pitchParam : 0.0f);
-    tts.setGain (gainParam ? *gainParam : 0.8f);
-    tts.setRoboticIntensity (roboticParam ? *roboticParam : 0.3f);
+    // Parameters are read fresh every block (avoids atomic copy issues)
 }
 
 RoboVoxAudioProcessor::~RoboVoxAudioProcessor() = default;
@@ -65,11 +56,11 @@ void RoboVoxAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce
     juce::ScopedNoDenormals noDenormals;
     const int numSamples = buffer.getNumSamples();
 
-    // Update parameters from APVTS (cheap atomic reads)
-    if (speedParam)   tts.setSpeed (*speedParam);
-    if (pitchParam)   tts.setPitchOffsetSemitones (*pitchParam);
-    if (gainParam)    tts.setGain (*gainParam);
-    if (roboticParam) tts.setRoboticIntensity (*roboticParam);
+    // Read parameters fresh every block (safe, no atomic copy issues)
+    if (auto* p = apvts.getRawParameterValue("speed"))   tts.setSpeed(*p);
+    if (auto* p = apvts.getRawParameterValue("pitch"))   tts.setPitchOffsetSemitones(*p);
+    if (auto* p = apvts.getRawParameterValue("gain"))    tts.setGain(*p);
+    if (auto* p = apvts.getRawParameterValue("robotic")) tts.setRoboticIntensity(*p);
 
     // Handle MIDI (monophonic last-note priority)
     processMidi (midiMessages);

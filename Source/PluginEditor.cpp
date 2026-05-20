@@ -37,7 +37,7 @@ RoboVoxAudioProcessorEditor::RoboVoxAudioProcessorEditor (RoboVoxAudioProcessor&
     addAndMakeVisible (statusLabel);
 
     // Knobs — logical grouping
-    auto setupSlider = [this](juce::Slider& s, const juce::String& suffix)
+    auto setupSlider = [this](juce::Slider& s, const juce::String& /*suffix*/)
     {
         s.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag);
         s.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 60, 18);

@@ -48,11 +48,5 @@ private:
 
     TTSynthesizer tts;
 
-    // Cached parameter pointers for speed (real-time)
-    std::atomic<float>* speedParam     = nullptr;
-    std::atomic<float>* pitchParam     = nullptr;
-    std::atomic<float>* gainParam      = nullptr;
-    std::atomic<float>* roboticParam   = nullptr;
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RoboVoxAudioProcessor)
 };
